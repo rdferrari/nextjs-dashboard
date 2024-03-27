@@ -1,20 +1,25 @@
+'use client'
+import { useEffect, useRef, useState } from "react";
 
-import { lusitana } from '@/app/ui/fonts';
-import { Metadata } from 'next';
+async function loadMap(container: HTMLDivElement) {
+    const { init } = await import("../../lib/mapping");
+    init(container);
+}
 
-export const metadata: Metadata = {
-    title: 'Map',
-};
+export default function WebMap() {
+    const mapRef = useRef<HTMLDivElement>(null);
+    const [loaded, setLoaded] = useState(false);
 
-export default async function Page() {
-
+    useEffect(() => {
+        if (!loaded && mapRef.current) {
+            setLoaded(true);
+            loadMap(mapRef.current);
+        }
+    }, [mapRef, loaded]);
 
     return (
-        <main>
-            <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
-                Map
-            </h1>
-
-        </main>
+        <section className="h-full w-full">
+            <div className="h-full w-full" ref={mapRef}></div>
+        </section>
     );
 }
